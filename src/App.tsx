@@ -1,8 +1,18 @@
 import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import SearchResults from "./pages/SearchResults/SearchResults";
 
-const App = () => {
+const App: React.FC = () => {
   return (
-    <h1>Github App</h1>
+    <>
+      <Router>
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/search" component={SearchResults} />
+        </Switch>
+      </Router>
+    </>
   );
 }
 
