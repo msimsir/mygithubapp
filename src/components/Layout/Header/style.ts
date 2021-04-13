@@ -4,6 +4,10 @@ export default makeStyles((theme: Theme) => ({
   header: {
     background: "#375f9d",
   },
+  logo: {
+    cursor: "pointer",
+  },
+
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
