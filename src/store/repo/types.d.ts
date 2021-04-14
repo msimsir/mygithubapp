@@ -2,6 +2,18 @@ import {
   GET_REPOS_REQUEST,
   GET_REPOS_REQUEST_SUCCESS,
   GET_REPOS_REQUEST_FAILED,
+  GET_REPO_CONTENT_REQUEST,
+  GET_REPO_CONTENT_REQUEST_SUCCESS,
+  GET_REPO_CONTENT_REQUEST_FAILED,
+  GET_REPO_REQUEST,
+  GET_REPO_REQUEST_SUCCESS,
+  GET_REPO_REQUEST_FAILED,
+  GET_BRANCH_COUNT_REQUEST,
+  GET_BRANCH_COUNT_REQUEST_SUCCESS,
+  GET_BRANCH_COUNT_REQUEST_FAILED,
+  GET_PULL_COUNT_REQUEST,
+  GET_PULL_COUNT_REQUEST_SUCCESS,
+  GET_PULL_COUNT_REQUEST_FAILED,
 } from "../../constants/actionTypes";
 
 export interface Repo {
@@ -122,11 +134,34 @@ export interface Repo {
   network_count: number;
 }
 
+export interface RepoContent {
+  name: string;
+  path: string;
+  sha: string;
+  size: number;
+  url: string;
+  html_url: string;
+  git_url: string;
+  download_url: string;
+  type: string;
+  content: string;
+  encoding: string;
+  _links: {
+    self: string;
+    git: string;
+    html: stirng;
+  };
+}
+
 export interface RepoState {
   repos: Repo[];
   loading: boolean;
   error?: string;
   totalCount: number;
+  selectedRepo: Repo | undefined;
+  repoContent: RepoContent | undefined;
+  branchCount: number;
+  pullCount: number;
 }
 
 export interface RepoGetRequestAction {
@@ -140,5 +175,61 @@ export interface RepoSuccessGetRequestAction {
 
 export interface RepoFailedGetRequestAction {
   type: typeof GET_REPOS_REQUEST_FAILED;
+  payload: string;
+}
+
+export interface RepoGetContentRequestAction {
+  type: typeof GET_REPO_CONTENT_REQUEST;
+}
+
+export interface RepoSuccesGetContentAction {
+  type: typeof GET_REPO_CONTENT_REQUEST_SUCCESS;
+  payload: RepoContent;
+}
+
+export interface RepoFailedGetContentAction {
+  type: typeof GET_REPO_CONTENT_REQUEST_FAILED;
+  payload: string;
+}
+
+export interface RepoGetOneRequestAction {
+  type: typeof GET_REPO_REQUEST;
+}
+
+export interface RepoSuccessGetOneAction {
+  type: typeof GET_REPO_REQUEST_SUCCESS;
+  payload: Repo;
+}
+
+export interface RepoFailedGetOneAction {
+  type: typeof GET_REPO_REQUEST_FAILED;
+  payload: string;
+}
+
+export interface RepoGetBranchCountRequestAction {
+  type: typeof GET_BRANCH_COUNT_REQUEST;
+}
+
+export interface RepoSuccessGetBranchCountAction {
+  type: typeof GET_BRANCH_COUNT_REQUEST_SUCCESS;
+  payload: number;
+}
+
+export interface RepoFailedGetBranchCountAction {
+  type: typeof GET_BRANCH_COUNT_REQUEST_FAILED;
+  payload: string;
+}
+
+export interface RepoGetPullCountRequestAction {
+  type: typeof GET_PULL_COUNT_REQUEST;
+}
+
+export interface RepoSuccessGetPullCountAction {
+  type: typeof GET_PULL_COUNT_REQUEST_SUCCESS;
+  payload: number;
+}
+
+export interface RepoFailedGetPullCountAction {
+  type: typeof GET_PULL_COUNT_REQUEST_FAILED;
   payload: string;
 }
