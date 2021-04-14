@@ -1,6 +1,6 @@
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 
-export default makeStyles(() => ({
+export default makeStyles((theme: Theme) => ({
   sidebarContainer: {
     flexDirection: "column",
     justifyContent: "center",
@@ -25,21 +25,15 @@ export default makeStyles(() => ({
     "&:hover $actionCount": {
       color: "rgba(55, 95, 157, 0.87)",
     },
-
-    "&:active": {
-      backgroundColor: "#d9e8ff",
-      color: "rgba(55, 95, 157, 0.87)",
-    },
   },
-  actionIcon: {},
   actionCount: { position: "absolute", right: "22px" },
   mainPanelContainer: { padding: "2.625rem 4rem" },
-  headerText: {},
+  headerText: { marginBottom: "1rem" },
   repoContainer: {
     display: "flex",
     flexDirection: "column",
     alignContent: "center",
-    padding: "1.5rem  0  ",
+    paddingTop: "1.5rem",
   },
   repoContent: {
     display: "flex",
@@ -60,6 +54,10 @@ export default makeStyles(() => ({
     fontSize: 24,
   },
   repoDescription: {
-      color: "#375f9d",
+    color: "#375f9d",
+  },
+  userPic: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
 }));
