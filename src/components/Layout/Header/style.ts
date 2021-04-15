@@ -50,5 +50,11 @@ export default makeStyles((theme: Theme) => ({
     color: "rgba(255, 255, 255, 0.87)",
     textTransform: "capitalize",
     fontSize: "1rem",
+    "&:active": {
+      background: "#557dbb",
+    },
+    "&:hover": {
+      background: "#557dbb",
+    },
   },
 }));

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { AppBar, Toolbar, InputBase, Button } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
+import BookmarkBorderSharpIcon from '@material-ui/icons/BookmarkBorderSharp';
 import useStyles from "./style";
 import logo from "../../../assets/logo.svg";
 import { getReposBySearch } from "../../../store/repo/actions";
@@ -13,6 +13,7 @@ const Header: React.FC = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
+    const location = useLocation();
     const [search, setSearch] = useState("");
 
     const getReposAndUsers = (e: React.KeyboardEvent) => {
@@ -40,7 +41,7 @@ const Header: React.FC = () => {
                         inputProps={{ 'aria-label': 'search' }}
                     />
                 </div>
-                <Button className={classes.bookmarkButton} startIcon={<BookmarkBorderOutlinedIcon />}>
+                <Button className={classes.bookmarkButton} startIcon={<BookmarkBorderSharpIcon />} onClick={() => history.push("/bookmarks")} style={location.pathname === "/bookmarks" ? { background: "#557dbb" } : {}}>
                     Bookmarks
                 </Button>
 
