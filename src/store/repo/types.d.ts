@@ -151,6 +151,8 @@ export interface RepoContent {
     git: string;
     html: stirng;
   };
+  message: string;
+  documentation_url: string;
 }
 
 export interface RepoState {

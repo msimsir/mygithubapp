@@ -21,7 +21,7 @@ export const getReposBySearch = (filter: string) => async (dispatch: any) => {
     dispatch({ type: GET_REPOS_REQUEST });
     const { total_count, items } = await fetch(
       `https://api.github.com/search/repositories?q=${filter}&type=repository`
-    ).then((respone) => respone.json());
+    ).then((response) => response.json());
     dispatch({
       type: GET_REPOS_REQUEST_SUCCESS,
       payload: { total_count, items },
@@ -37,8 +37,8 @@ export const getRepoContentBySelected = (filter: string) => async (
   try {
     dispatch({ type: GET_REPO_CONTENT_REQUEST });
     const data = await fetch(
-      `https://api.github.com/repos/${filter}/contents/README.md?ref=master`
-    ).then((respone) => respone.json());
+      `https://api.github.com/repos/${filter}/contents/README.md`
+    ).then((response) => response.json());
     dispatch({
       type: GET_REPO_CONTENT_REQUEST_SUCCESS,
       payload: data,
@@ -55,7 +55,7 @@ export const getOneRepoBySelected = (filter: string) => async (
     dispatch({ type: GET_REPO_REQUEST });
     const data = await fetch(
       `https://api.github.com/repos/${filter}`
-    ).then((respone) => respone.json());
+    ).then((response) => response.json());
     dispatch({
       type: GET_REPO_REQUEST_SUCCESS,
       payload: data,
@@ -90,8 +90,6 @@ export const getPullCountBySelected = (filter: string) => async (
     const data = await fetch(
       `https://api.github.com/repos/${filter}/pulls`
     ).then((response) => response.json());
-
-    console.log(">>>> pullcoount", data.length);
     dispatch({
       type: GET_PULL_COUNT_REQUEST_SUCCESS,
       payload: data.length,
