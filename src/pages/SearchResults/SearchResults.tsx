@@ -48,7 +48,7 @@ const SearchResults: React.FC = () => {
     }, [userCount]);
 
     useEffect(() => {
-        setFilteredBookmarks(repos.filter((repo: Repo) => bookmarks.find((bookmark: Repo) => repo.id === bookmark.id)));
+        repos && bookmarks && setFilteredBookmarks(repos.filter((repo: Repo) => bookmarks.find((bookmark: Repo) => repo.id === bookmark.id)));
     }, [repos, bookmarks]);
 
 
