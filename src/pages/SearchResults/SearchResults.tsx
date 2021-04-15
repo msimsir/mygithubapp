@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Avatar, Divider, Grid, List, ListItem, ListItemIcon, ListItemText, Typography } from "@material-ui/core";
-import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
+import BookmarkBorderSharpIcon from '@material-ui/icons/BookmarkBorderSharp';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import InsertEmoticonOutlinedIcon from '@material-ui/icons/InsertEmoticonOutlined';
-import BookOutlinedIcon from '@material-ui/icons/BookOutlined';
 import Header from "../../components/Layout/Header/Header";
 import Main from "../../components/Layout/Main/Main";
 import { RootState } from "../../store";
@@ -13,13 +12,15 @@ import { Repo } from "../../store/repo/types";
 import { User } from "../../store/user/types";
 import { formatRepoName } from "../../utils/formatRepoName";
 import useStyles from "./style";
-import { getBranchCountBySelected, getOneRepoBySelected, getPullCountBySelected, getRepoContentBySelected } from "../../store/repo/actions";
+import { getOneUserBySelected, getUserReposBySelected } from "../../store/user/actions";
+import RepoCard from "../../components/RepoCard/RepoCard";
 
 const SearchResults: React.FC = () => {
-    const [filteredRepos, setFilteredRepos] = useState<Repo[] | []>([])
+    const [filteredRepos, setFilteredRepos] = useState<Repo[] | []>([]);
     const [filteredRepoCount, setFilteredRepoCount] = useState(0);
-    const [filteredUsers, setFilteredUsers] = useState<User[] | []>([])
+    const [filteredUsers, setFilteredUsers] = useState<User[] | []>([]);
     const [filteredUserCount, setFilteredUserCount] = useState(0);
+    const [filteredBookmarks, setFilteredBookmarks] = useState<Repo[] | []>([]);
     const [selectedSidebarItem, setSelectedSidebarItem] = useState("Repos");
     const classes = useStyles();
     const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const SearchResults: React.FC = () => {
     const repoCount = useSelector((state: RootState) => state.repo.totalCount)
     const users = useSelector((state: RootState) => state.user.users)
     const userCount = useSelector((state: RootState) => state.user.totalCount)
+    const bookmarks = useSelector((state: RootState) => state.bookmark.bookmarks)
 
     useEffect(() => {
         setFilteredRepos(repos);
@@ -45,13 +47,15 @@ const SearchResults: React.FC = () => {
         setFilteredUserCount(userCount);
     }, [userCount]);
 
+    useEffect(() => {
+        setFilteredBookmarks(repos.filter((repo: Repo) => bookmarks.find((bookmark: Repo) => repo.id === bookmark.id)));
+    }, [repos, bookmarks]);
 
-    const handleRepoDetail = (repo: Repo) => {
-        dispatch(getRepoContentBySelected(formatRepoName(repo.html_url)));
-        dispatch(getOneRepoBySelected(formatRepoName(repo.html_url)));
-        dispatch(getBranchCountBySelected(formatRepoName(repo.html_url)));
-        dispatch(getPullCountBySelected(formatRepoName(repo.html_url)));
-        history.push("/repodetail");
+
+    const handleUserDetail = (user: User) => {
+        dispatch(getOneUserBySelected(user.login))
+        dispatch(getUserReposBySelected(user.login))
+        history.push("/userdetail")
     }
 
     return (
@@ -97,10 +101,10 @@ const SearchResults: React.FC = () => {
                                 <ListItemIcon style={selectedSidebarItem === "Bookmarked" ? {
                                     color: "rgba(55, 95, 157, 0.87)",
                                 } : {}}>
-                                    <BookmarkBorderOutlinedIcon />
+                                    <BookmarkBorderSharpIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Bookmarked" />
-                                <ListItemText primary="100" className={classes.actionCount}
+                                <ListItemText primary={filteredBookmarks && filteredBookmarks.length} className={classes.actionCount}
                                 />
                             </ListItem>
                         </List>
@@ -111,18 +115,7 @@ const SearchResults: React.FC = () => {
                                 <>
                                     <Typography className={classes.headerText} variant="h5">{repoCount} Repository Results</Typography>
                                     {filteredRepos && filteredRepos.map((repo: Repo) => (
-                                        <div key={repo.id} className={classes.repoContainer}>
-                                            <div className={classes.repoContent} onClick={() => handleRepoDetail(repo)}>
-                                                <div className={classes.repoIcon}>
-                                                    <BookOutlinedIcon />
-                                                </div>
-                                                <div className={classes.repoInfo}>
-                                                    <Typography variant="h6" className={classes.repoDescription}>{formatRepoName(repo.html_url)}</Typography>
-                                                    <Typography variant="body1">{repo.description}</Typography>
-                                                </div>
-                                            </div>
-                                            <Divider />
-                                        </div>
+                                        <RepoCard key={repo.id} repo={repo} />
                                     ))}
                                 </>
                             )}
@@ -131,15 +124,15 @@ const SearchResults: React.FC = () => {
                                 <>
                                     <Typography className={classes.headerText} variant="h5">{userCount} User Results</Typography>
                                     {filteredUsers && filteredUsers.map((user: User) => (
-                                        <div key={user.id} className={classes.repoContainer}>
-                                            <div className={classes.repoContent}>
-                                                <div className={classes.repoIcon}>
+                                        <div key={user.id} className={classes.cardContainer}>
+                                            <div className={classes.cardContent} onClick={() => handleUserDetail(user)}>
+                                                <div className={classes.cardIcon}>
                                                     <Avatar alt={user.login} src={user.avatar_url} className={classes.userPic} />
                                                 </div>
-                                                <div className={classes.repoInfo}>
+                                                <div className={classes.cardInfo}>
 
-                                                    <Typography variant="h6" className={classes.repoDescription}>{formatRepoName(user.html_url)}</Typography>
-                                                    <Typography variant="body1" className={classes.repoDescription}>{user.bio}</Typography>
+                                                    <Typography variant="h6" className={classes.cardDescription}>{formatRepoName(user.html_url)}</Typography>
+                                                    <Typography variant="body1" className={classes.cardDescription}>{user.bio}</Typography>
 
                                                 </div>
                                             </div>
@@ -151,7 +144,10 @@ const SearchResults: React.FC = () => {
 
                             {selectedSidebarItem === "Bookmarked" && (
                                 <>
-                                    <p>Bookmarked Repos</p>
+                                    <Typography className={classes.headerText} variant="h5">{filteredBookmarks && filteredBookmarks.length} Bookmarked Repository Results</Typography>
+                                    {filteredBookmarks && filteredBookmarks.length > 0 && filteredBookmarks.map((filteredBookmark: Repo) => (
+                                        <RepoCard key={filteredBookmark.id} repo={filteredBookmark} />
+                                    ))}
                                 </>
                             )}
 

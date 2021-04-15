@@ -19,41 +19,36 @@ export default makeStyles((theme: Theme) => ({
       backgroundColor: "#d9e8ff",
       color: "rgba(55, 95, 157, 0.87)",
     },
-    "&:hover $actionIcon": {
-      color: "rgba(55, 95, 157, 0.87)",
-    },
-    "&:hover $actionCount": {
-      color: "rgba(55, 95, 157, 0.87)",
-    },
+
   },
   actionCount: { position: "absolute", right: "22px" },
   mainPanelContainer: { padding: "2.625rem 4rem" },
   headerText: { marginBottom: "1rem" },
-  repoContainer: {
+  cardContainer: {
     display: "flex",
     flexDirection: "column",
     alignContent: "center",
     paddingTop: "1.5rem",
   },
-  repoContent: {
+  cardContent: {
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "flex-start",
     paddingBottom: "1.5rem",
   },
-  repoInfo: {
+  cardInfo: {
     display: "flex",
     flexDirection: "column",
     cursor: "pointer",
   },
-  repoIcon: {
+  cardIcon: {
     marginTop: "0.25rem",
     marginRight: "0.5rem",
     color: "#323232",
     fontSize: 24,
   },
-  repoDescription: {
+  cardDescription: {
     color: "#375f9d",
   },
   userPic: {
