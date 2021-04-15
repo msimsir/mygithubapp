@@ -8,6 +8,7 @@ export default makeStyles(() => ({
     borderRight: "1px solid #c4c4c4",
     padding: "2.625rem 2.875rem",
     maxWidth: "360px",
+    minWidth: "200px",
     height: "100%",
   },
 
@@ -92,6 +93,21 @@ export default makeStyles(() => ({
     },
   },
 
+  removeBookmarkButton: {
+    width: "268px",
+    height: "38px",
+    color: "#ffffff",
+    backgroundColor: "#2c98f0",
+    textTransform: "capitalize",
+    fontSize: "1rem",
+    border: "1px solid #2c98f0",
+    borderRadius: "4px",
+    "&:hover": {
+      backgroundColor: "#ffffff",
+      color: "#2c98f0",
+    },
+  },
+
   customIcon: {
     width: "1.25rem",
     height: "1.25rem",
@@ -100,5 +116,15 @@ export default makeStyles(() => ({
 
   mainContainer: {
     padding: "2.625rem 4rem",
+  },
+
+  repoContent: {
+    width: "100%",
+    height: "100%",
+  },
+
+  alertContent: {
+    display: "flex",
+    flexDirection: "row",
   },
 }));

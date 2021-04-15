@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import marked from "marked";
 import base64 from "base-64";
 import { Button, Divider, Grid, Typography } from "@material-ui/core";
@@ -13,22 +13,28 @@ import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import LinkIcon from '@material-ui/icons/Link';
 import StarOutlineRoundedIcon from '@material-ui/icons/StarOutlineRounded';
 import ErrorOutlineOutlinedIcon from '@material-ui/icons/ErrorOutlineOutlined';
-import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
+import BookmarkBorderSharpIcon from '@material-ui/icons/BookmarkBorderSharp';
+import OutlinedFlagIcon from '@material-ui/icons/OutlinedFlag';
 import gitPullRequestIcon from "../../assets/git-pull-request-icon.svg";
 import gitForkIcon from "../../assets/git-fork-icon.svg";
 import gitBranchIcon from "../../assets/git-branch-icon.svg";
 import { formatCount } from "../../utils/formatCount";
+import { addToBookmark, removeBookmark } from "../../store/bookmark/actions";
 
 const RepoDetails: React.FC = () => {
     const classes = useStyles();
+    const dispatch = useDispatch();
     const [selectedRepoDetail, setSelectedRepoDetail] = useState<Repo | undefined>(undefined);
     const [selectedRepoContent, setSelectedRepoContent] = useState<RepoContent | undefined>(undefined);
     const [selectedRepoBranch, setSelectedRepoBranch] = useState<number>(0);
     const [selectedRepoPull, setSelectedRepoPull] = useState<number>(0);
+    const [addButton, setAddButton] = useState(false);
     const selectedRepo = useSelector((state: RootState) => state.repo.selectedRepo);
     const repoContent = useSelector((state: RootState) => state.repo.repoContent);
     const branchCount = useSelector((state: RootState) => state.repo.branchCount);
     const pullCount = useSelector((state: RootState) => state.repo.pullCount);
+    const repoLoading = useSelector((state: RootState) => state.repo.loading);
+    const bookmarks = useSelector((state: RootState) => state.bookmark.bookmarks);
 
     useEffect(() => {
         setSelectedRepoDetail(selectedRepo)
@@ -47,28 +53,33 @@ const RepoDetails: React.FC = () => {
     }, [pullCount]);
 
 
+    useEffect(() => {
+        selectedRepo && bookmarks && bookmarks.filter((bookmark) => bookmark.id === selectedRepo.id).length > 0 ? setAddButton(false) : setAddButton(true)
+    }, [selectedRepo, bookmarks]);
+
     const handleRepoContent = (content: string) => {
-        const text = base64.decode(content)
+        const text = base64.decode(content);
         return {
             __html: marked(text)
         };
     }
 
-    console.log("*******repodetail", selectedRepoDetail);
-    console.log("*******repocontent", selectedRepoContent);
+
+
     return (
         <>
             <Header />
             <Main>
                 <Grid container>
-                    {selectedRepo && (
-                        <Grid item md={3} className={classes.sidebarContainer}>
+
+                    <Grid item sm={3} xs={12} className={classes.sidebarContainer}>
+                        {selectedRepoDetail && (<>
                             <BookOutlinedIcon className={classes.repoDetailIcon} />
-                            <Typography variant="h5" className={classes.repoTitle}>{selectedRepo.full_name}</Typography>
-                            <Typography variant="body1">{selectedRepo.description}</Typography>
-                            <div className={classes.linkWrapper} onClick={() => selectedRepo && window.open(selectedRepo.html_url)}>
+                            <Typography variant="h5" className={classes.repoTitle}>{selectedRepoDetail.full_name}</Typography>
+                            <Typography variant="body1">{selectedRepoDetail.description}</Typography>
+                            <div className={classes.linkWrapper} onClick={() => selectedRepoDetail && window.open(selectedRepoDetail.html_url)}>
                                 <LinkIcon className={classes.linkIcon} />
-                                <Typography className={classes.linkTitle}>{selectedRepo?.full_name}</Typography>
+                                <Typography className={classes.linkTitle}>{selectedRepoDetail.full_name}</Typography>
                             </div>
                             <div className={classes.sectionOne}>
                                 <div className={classes.infoWrapper}>
@@ -77,7 +88,7 @@ const RepoDetails: React.FC = () => {
                                         <Typography className={classes.infoText}>Watch</Typography>
                                     </div>
                                     <div>
-                                        <Typography className={classes.infoCountText}>{formatCount(selectedRepo.subscribers_count)}</Typography>
+                                        <Typography className={classes.infoCountText}>{formatCount(selectedRepoDetail.subscribers_count)}</Typography>
                                     </div>
                                 </div>
                                 <Divider />
@@ -87,7 +98,7 @@ const RepoDetails: React.FC = () => {
                                         <Typography className={classes.infoText}>Star</Typography>
                                     </div>
                                     <div>
-                                        <Typography className={classes.infoCountText}>{formatCount(selectedRepo.stargazers_count)}</Typography>
+                                        <Typography className={classes.infoCountText}>{formatCount(selectedRepoDetail.stargazers_count)}</Typography>
                                     </div>
                                 </div>
                                 <Divider />
@@ -99,7 +110,7 @@ const RepoDetails: React.FC = () => {
                                         <Typography className={classes.infoText}>Fork</Typography>
                                     </div>
                                     <div>
-                                        <Typography className={classes.infoCountText}>{formatCount(selectedRepo.forks_count)}</Typography>
+                                        <Typography className={classes.infoCountText}>{formatCount(selectedRepoDetail.forks_count)}</Typography>
                                     </div>
                                 </div>
                                 <Divider />
@@ -123,7 +134,7 @@ const RepoDetails: React.FC = () => {
                                         <Typography className={classes.infoText}>Issues</Typography>
                                     </div>
                                     <div>
-                                        <Typography className={classes.infoCountText}>{formatCount(selectedRepo.open_issues_count)}</Typography>
+                                        <Typography className={classes.infoCountText}>{formatCount(selectedRepoDetail.open_issues_count)}</Typography>
                                     </div>
                                 </div>
                                 <Divider />
@@ -137,19 +148,34 @@ const RepoDetails: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                            <Button startIcon={<BookmarkBorderOutlinedIcon />} className={classes.addBookmarkButton}>
-                                Add to Bookmarks
-                        </Button>
-                        </Grid>
-                    )}
 
-                    <Grid item md={9} className={classes.mainContainer}>
+
+                            {addButton === true ? (
+                                <Button startIcon={<BookmarkBorderSharpIcon />} className={classes.addBookmarkButton} onClick={() => dispatch(addToBookmark(selectedRepoDetail))}>
+                                    Add to Bookmarks
+                                </Button>
+                            ) : (
+                                <Button startIcon={<BookmarkBorderSharpIcon />} className={classes.removeBookmarkButton} onClick={() => dispatch(removeBookmark(selectedRepoDetail))}>
+                                    Remove Bookmarks
+                                </Button>
+                            )}
+
+                        </>
+                        )}
+                    </Grid>
+
+
+                    <Grid item sm={9} xs={12} className={classes.mainContainer}>
                         {
-                            selectedRepoContent && (
-                                <div dangerouslySetInnerHTML={handleRepoContent(selectedRepoContent.content)}>
-
+                            selectedRepoContent && !selectedRepoContent.message && (
+                                <div className={classes.repoContent} dangerouslySetInnerHTML={handleRepoContent(selectedRepoContent.content)}>
                                 </div>
                             )
+                        }
+                        {selectedRepoContent && selectedRepoContent.message && selectedRepoContent.message.length > 0 &&
+                            <div className={classes.alertContent} ><OutlinedFlagIcon style={{ marginRight: "0.5rem" }} />
+                                <Typography>There is no content</Typography>
+                            </div>
                         }
                     </Grid>
                 </Grid>
