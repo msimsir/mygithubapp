@@ -2,7 +2,14 @@ import {
   GET_USERS_REQUEST,
   GET_USERS_REQUEST_SUCCESS,
   GET_USERS_REQUEST_FAILED,
+  GET_USER_REQUEST,
+  GET_USER_REQUEST_SUCCESS,
+  GET_USER_REQUEST_FAILED,
+  GET_USER_REPOS_REQUEST,
+  GET_USER_REPOS_REQUEST_SUCCESS,
+  GET_USER_REPOS_REQUEST_FAILED,
 } from "../../constants/actionTypes";
+import { Repo } from "../repo/types";
 
 export interface User {
   login: string;
@@ -44,6 +51,8 @@ export interface UserState {
   loading: boolean;
   error?: string;
   totalCount: number;
+  selectedUser: User | undefined;
+  userRepos: Repo[];
 }
 
 export interface UserGetRequestAction {
@@ -57,5 +66,33 @@ export interface UserSuccessGetRequestAction {
 
 export interface UserFailedGetRequestAction {
   type: typeof GET_USERS_REQUEST_FAILED;
+  payload: string;
+}
+
+export interface UserGetOneRequestAction {
+  type: typeof GET_USER_REQUEST;
+}
+
+export interface UserSuccessGetOneAction {
+  type: typeof GET_USER_REQUEST_SUCCESS;
+  payload: Repo;
+}
+
+export interface UserFailedGetOneAction {
+  type: typeof GET_USER_REQUEST_FAILED;
+  payload: string;
+}
+
+export interface UserGetUserRepoRequestAction {
+  type: typeof GET_USER_REPOS_REQUEST;
+}
+
+export interface UserSuccessGetUserRepoAction {
+  type: typeof GET_USER_REPOS_REQUEST_SUCCESS;
+  payload: Repo;
+}
+
+export interface UserFailedGetUserRepoAction {
+  type: typeof GET_USER_REPOS_REQUEST_FAILED;
   payload: string;
 }
