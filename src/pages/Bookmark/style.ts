@@ -1,6 +1,6 @@
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 
-export default makeStyles(() => ({
+export default makeStyles((theme: Theme) => ({
   sidebarContainer: {
     flexDirection: "column",
     justifyContent: "center",
@@ -10,6 +10,9 @@ export default makeStyles(() => ({
     maxWidth: "360px",
     minWidth: "200px",
     height: "100%",
+    [theme.breakpoints.down("md")]: {
+      maxWidth: "100%",
+    },
   },
   mainContainer: {
     padding: "2.625rem 4rem",

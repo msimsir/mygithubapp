@@ -19,7 +19,6 @@ export default makeStyles((theme: Theme) => ({
       backgroundColor: "#d9e8ff",
       color: "rgba(55, 95, 157, 0.87)",
     },
-
   },
   actionCount: { position: "absolute", right: "22px" },
   mainPanelContainer: { padding: "2.625rem 4rem" },
@@ -54,5 +53,11 @@ export default makeStyles((theme: Theme) => ({
   userPic: {
     width: theme.spacing(3),
     height: theme.spacing(3),
+  },
+
+  loadingPanel: {
+    display: "flex",
+    alignItem: "center",
+    justifyContent: "center",
   },
 }));

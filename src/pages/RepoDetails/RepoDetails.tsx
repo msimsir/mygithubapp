@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import marked from "marked";
 import base64 from "base-64";
-import { Button, Divider, Grid, Typography } from "@material-ui/core";
+import { Button, CircularProgress, Divider, Grid, Typography } from "@material-ui/core";
 import Header from "../../components/Layout/Header/Header";
 import Main from "../../components/Layout/Main/Main";
 import useStyles from "./style";
@@ -71,8 +71,7 @@ const RepoDetails: React.FC = () => {
             <Header />
             <Main>
                 <Grid container>
-
-                    <Grid item sm={3} xs={12} className={classes.sidebarContainer}>
+                    <Grid item md={3} sm={12} className={classes.sidebarContainer}>
                         {selectedRepoDetail && (<>
                             <BookOutlinedIcon className={classes.repoDetailIcon} />
                             <Typography variant="h5" className={classes.repoTitle}>{selectedRepoDetail.full_name}</Typography>
@@ -165,18 +164,19 @@ const RepoDetails: React.FC = () => {
                     </Grid>
 
 
-                    <Grid item sm={9} xs={12} className={classes.mainContainer}>
+                    <Grid item md={9} sm={12} className={classes.mainContainer}>
                         {
                             selectedRepoContent && !selectedRepoContent.message && (
                                 <div className={classes.repoContent} dangerouslySetInnerHTML={handleRepoContent(selectedRepoContent.content)}>
                                 </div>
                             )
                         }
-                        {selectedRepoContent && selectedRepoContent.message && selectedRepoContent.message.length > 0 &&
+                        {!repoLoading && selectedRepoContent && selectedRepoContent.message && selectedRepoContent.message.length > 0 &&
                             <div className={classes.alertContent} ><OutlinedFlagIcon style={{ marginRight: "0.5rem" }} />
                                 <Typography>There is no content</Typography>
                             </div>
                         }
+                        {repoLoading && <div className={classes.loadingPanel}> <CircularProgress /></div>}
                     </Grid>
                 </Grid>
             </Main>

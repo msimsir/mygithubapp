@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Avatar, Divider, Grid, List, ListItem, ListItemIcon, ListItemText, Typography } from "@material-ui/core";
+import { Avatar, CircularProgress, Divider, Grid, List, ListItem, ListItemIcon, ListItemText, Typography } from "@material-ui/core";
 import BookmarkBorderSharpIcon from '@material-ui/icons/BookmarkBorderSharp';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import InsertEmoticonOutlinedIcon from '@material-ui/icons/InsertEmoticonOutlined';
@@ -27,6 +27,7 @@ const SearchResults: React.FC = () => {
     const history = useHistory();
     const repos = useSelector((state: RootState) => state.repo.repos)
     const repoCount = useSelector((state: RootState) => state.repo.totalCount)
+    const reposLoading = useSelector((state: RootState) => state.repo.loading);
     const users = useSelector((state: RootState) => state.user.users)
     const userCount = useSelector((state: RootState) => state.user.totalCount)
     const bookmarks = useSelector((state: RootState) => state.bookmark.bookmarks)
@@ -63,7 +64,7 @@ const SearchResults: React.FC = () => {
             <Header />
             <Main>
                 <Grid container>
-                    <Grid item md={3} className={classes.sidebarContainer}>
+                    <Grid item md={3} sm={12} className={classes.sidebarContainer}>
                         <List className={classes.actionContainer}>
                             <ListItem button className={classes.action} onClick={() => setSelectedSidebarItem("Repos")} style={selectedSidebarItem === "Repos" ? {
                                 backgroundColor: "#d9e8ff",
@@ -109,49 +110,54 @@ const SearchResults: React.FC = () => {
                             </ListItem>
                         </List>
                     </Grid>
-                    <Grid item md={9}>
-                        <div className={classes.mainPanelContainer}>
-                            {selectedSidebarItem === "Repos" && (
-                                <>
-                                    <Typography className={classes.headerText} variant="h5">{repoCount} Repository Results</Typography>
-                                    {filteredRepos && filteredRepos.map((repo: Repo) => (
-                                        <RepoCard key={repo.id} repo={repo} />
-                                    ))}
-                                </>
-                            )}
+                    <Grid item md={9} sm={12}>
+                        {reposLoading && <div className={classes.loadingPanel}> <CircularProgress /></div>}
+                        {!reposLoading && (
+                            <div className={classes.mainPanelContainer}>
 
-                            {selectedSidebarItem === "Users" && (
-                                <>
-                                    <Typography className={classes.headerText} variant="h5">{userCount} User Results</Typography>
-                                    {filteredUsers && filteredUsers.map((user: User) => (
-                                        <div key={user.id} className={classes.cardContainer}>
-                                            <div className={classes.cardContent} onClick={() => handleUserDetail(user)}>
-                                                <div className={classes.cardIcon}>
-                                                    <Avatar alt={user.login} src={user.avatar_url} className={classes.userPic} />
+                                {selectedSidebarItem === "Repos" && (
+                                    <>
+                                        <Typography className={classes.headerText} variant="h5">{repoCount} Repository Results</Typography>
+                                        {filteredRepos && filteredRepos.map((repo: Repo) => (
+                                            <RepoCard key={repo.id} repo={repo} />
+                                        ))}
+                                    </>
+                                )}
+
+                                {selectedSidebarItem === "Users" && (
+                                    <>
+                                        <Typography className={classes.headerText} variant="h5">{userCount} User Results</Typography>
+                                        {filteredUsers && filteredUsers.map((user: User) => (
+                                            <div key={user.id} className={classes.cardContainer}>
+                                                <div className={classes.cardContent} onClick={() => handleUserDetail(user)}>
+                                                    <div className={classes.cardIcon}>
+                                                        <Avatar alt={user.login} src={user.avatar_url} className={classes.userPic} />
+                                                    </div>
+                                                    <div className={classes.cardInfo}>
+
+                                                        <Typography variant="h6" className={classes.cardDescription}>{formatRepoName(user.html_url)}</Typography>
+                                                        <Typography variant="body1" className={classes.cardDescription}>{user.bio}</Typography>
+
+                                                    </div>
                                                 </div>
-                                                <div className={classes.cardInfo}>
-
-                                                    <Typography variant="h6" className={classes.cardDescription}>{formatRepoName(user.html_url)}</Typography>
-                                                    <Typography variant="body1" className={classes.cardDescription}>{user.bio}</Typography>
-
-                                                </div>
+                                                <Divider />
                                             </div>
-                                            <Divider />
-                                        </div>
-                                    ))}
-                                </>
-                            )}
+                                        ))}
+                                    </>
+                                )}
 
-                            {selectedSidebarItem === "Bookmarked" && (
-                                <>
-                                    <Typography className={classes.headerText} variant="h5">{filteredBookmarks && filteredBookmarks.length} Bookmarked Repository Results</Typography>
-                                    {filteredBookmarks && filteredBookmarks.length > 0 && filteredBookmarks.map((filteredBookmark: Repo) => (
-                                        <RepoCard key={filteredBookmark.id} repo={filteredBookmark} />
-                                    ))}
-                                </>
-                            )}
+                                {selectedSidebarItem === "Bookmarked" && (
+                                    <>
+                                        <Typography className={classes.headerText} variant="h5">{filteredBookmarks && filteredBookmarks.length} Bookmarked Repository Results</Typography>
+                                        {filteredBookmarks && filteredBookmarks.length > 0 && filteredBookmarks.map((filteredBookmark: Repo) => (
+                                            <RepoCard key={filteredBookmark.id} repo={filteredBookmark} />
+                                        ))}
+                                    </>
+                                )}
 
-                        </div>
+                            </div>
+                        )}
+
 
                     </Grid>
                 </Grid>
